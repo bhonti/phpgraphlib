@@ -88,6 +88,7 @@ class PHPGraphLib {
 	protected $bool_line = false;
 	protected $bool_data_values = false;
 	protected $bool_x_axis_values_vert = true;
+	protected $bool_y_axis_values_vert = true;
 	protected $bool_data_points = false;
 	protected $bool_title_left = false;
 	protected $bool_title_right = false;
@@ -433,7 +434,12 @@ class PHPGraphLib {
 				}
 				// display data values
 				if ($this->bool_data_values) {
-					$dataX = ($x1 + ($this->bar_width / 2)) - ((strlen($item) * self::DATA_VALUE_TEXT_WIDTH) / 2);
+				  if (!$this->bool_y_axis_values_vert) {
+						$dataX = ($x1 + ($this->bar_width / 2)) - ((strlen($item) * self::DATA_VALUE_TEXT_WIDTH) / 2);
+					}
+					else	{	// y values to be written vertically
+						$dataX = ($x1 + ($this->bar_width / 2)) - ((self::DATA_VALUE_TEXT_WIDTH) / 2);
+					}
 					//value to be graphed is equal/over 0
 					if ($item >= 0) {
 						$dataY = $y1 - self::DATA_VALUE_PADDING - self::DATA_VALUE_TEXT_HEIGHT;
@@ -454,7 +460,11 @@ class PHPGraphLib {
 					}
 					//recenter data position if necessary
 					$dataX -= ($this->data_additional_length * self::DATA_VALUE_TEXT_WIDTH) / 2;
-					imagestring($this->image, 2, $dataX, $dataY, $item,  $this->data_value_color);
+					if (!$this->bool_y_axis_values_vert) {
+						imagestring($this->image, 2, $dataX, $dataY, $item,  $this->data_value_color);
+					}	else	{	//	write y values vertically
+						imagestringup($this->image, 2, $dataX, $dataY, $item,  $this->data_value_color);
+					}
 				}
 				//write x axis value 
 				if ($this->bool_x_axis_values) {
@@ -1147,6 +1157,24 @@ class PHPGraphLib {
 			$this->bool_x_axis_values_vert = $bool;
 		} else {
 			$this->error[] = "Boolean arg for setXValuesVertical() not specified properly.";
+		}
+	}
+
+	public function setYValuesHorizontal($bool) 
+	{
+		if (is_bool($bool)) {
+			$this->bool_y_axis_values_vert = !$bool;
+		} else {
+			$this->error[] = "Boolean arg for setYValuesHorizontal() not specified properly."; 
+		}
+	}
+
+	public function setYValuesVertical($bool) 
+	{
+		if (is_bool($bool)) {
+			$this->bool_y_axis_values_vert = $bool;
+		} else {
+			$this->error[] = "Boolean arg for setYValuesVertical() not specified properly.";
 		}
 	}
 
